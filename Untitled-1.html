@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CivicSolve — From Problems to Progress</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#14213D;
+    --ink-2:#1B2A4A;
+    --paper:#F3EFE6;
+    --paper-2:#EAE4D6;
+    --brass:#B4863B;
+    --brass-dark:#8F6A2B;
+    --brick:#A24632;
+    --slate:#5C6B7A;
+    --line:rgba(20,33,61,0.14);
+    --line-light:rgba(243,239,230,0.22);
+    --radius:2px;
+    --maxw:1180px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'IBM Plex Sans', sans-serif;
+    font-size:16px;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.display{
+    font-family:'Fraunces', serif;
+    font-weight:500;
+    margin:0;
+    letter-spacing:-0.01em;
+  }
+  p{margin:0;}
+  a{color:inherit;text-decoration:none;}
+  img,svg{display:block;max-width:100%;}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 32px;}
+  section{position:relative;}
+  ::selection{background:var(--brass);color:var(--paper);}
+  :focus-visible{outline:2px solid var(--brick);outline-offset:3px;}
+
+  /* ---------- NAV ---------- */
+  header{
+    position:sticky;top:0;z-index:50;
+    background:rgba(243,239,230,0.92);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);
+  }
+  nav.wrap{
+    display:flex;align-items:center;justify-content:space-between;
+    height:74px;
+  }
+  .logo{
+    font-family:'Fraunces',serif;font-size:22px;font-weight:600;
+    display:flex;align-items:center;gap:9px;
+  }
+  .logo .mark{
+    width:11px;height:11px;background:var(--brick);border-radius:50%;
+    flex-shrink:0;
+  }
+  .nav-links{display:flex;gap:36px;align-items:center;}
+  .nav-links a{font-size:15px;color:var(--ink-2);}
+  .nav-links a:hover{color:var(--brick);}
+  .nav-cta{
+    display:flex;gap:12px;align-items:center;
+  }
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;
+    padding:11px 22px;font-size:14.5px;font-weight:500;
+    border-radius:var(--radius);border:1px solid var(--ink);
+    cursor:pointer;transition:background .15s ease, color .15s ease, border-color .15s ease;
+    font-family:'IBM Plex Sans',sans-serif;
+    white-space:nowrap;
+  }
+  .btn-solid{background:var(--ink);color:var(--paper);}
+  .btn-solid:hover{background:var(--brick);border-color:var(--brick);}
+  .btn-ghost{background:transparent;color:var(--ink);}
+  .btn-ghost:hover{border-color:var(--brick);color:var(--brick);}
+  .btn-on-dark{border-color:var(--line-light);color:var(--paper);}
+  .btn-on-dark:hover{border-color:var(--brass);color:var(--brass);}
+  .btn-solid-brass{background:var(--brass);color:var(--ink);border-color:var(--brass);}
+  .btn-solid-brass:hover{background:var(--paper);color:var(--ink);}
+
+  .burger{display:none;background:none;border:none;cursor:pointer;padding:6px;}
+  .burger span{display:block;width:22px;height:2px;background:var(--ink);margin:5px 0;}
+
+  /* ---------- HERO ---------- */
+  .hero{padding:88px 0 96px;overflow:hidden;}
+  .hero .wrap{display:grid;grid-template-columns:1.05fr 0.95fr;gap:56px;align-items:center;}
+  .kicker{
+    font-family:'Fraunces',serif;font-style:italic;font-weight:500;
+    color:var(--brick);font-size:17px;margin-bottom:18px;display:block;
+  }
+  .hero h1{font-size:56px;line-height:1.06;color:var(--ink);}
+  .hero p.lede{
+    margin-top:24px;font-size:18px;line-height:1.65;color:var(--ink-2);
+    max-width:46ch;
+  }
+  .hero .actions{display:flex;gap:14px;margin-top:34px;flex-wrap:wrap;}
+  .hero-figure{position:relative;}
+  .hero-figure svg{width:100%;height:auto;}
+  .line-draw{
+    stroke-dasharray:400;stroke-dashoffset:400;
+    animation:draw 1.4s ease forwards;
+  }
+  .line-draw.d2{animation-delay:.18s;}
+  .line-draw.d3{animation-delay:.36s;}
+  .line-draw.d4{animation-delay:.75s;}
+  @keyframes draw{to{stroke-dashoffset:0;}}
+  @media (prefers-reduced-motion: reduce){
+    .line-draw{animation:none;stroke-dashoffset:0;}
+  }
+
+  /* ---------- SECTION HEADERS ---------- */
+  .section-head{max-width:640px;margin-bottom:56px;}
+  .section-head h2{font-size:38px;color:var(--ink);}
+  .section-head p{margin-top:16px;font-size:17px;color:var(--slate);}
+  .section-pad{padding:104px 0;}
+
+  /* ---------- THE GAP ---------- */
+  .gap{background:var(--ink);color:var(--paper);}
+  .gap .wrap{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--line-light);}
+  .gap-col{padding:52px 48px;}
+  .gap-col + .gap-col{border-left:1px solid var(--line-light);}
+  .gap-col .tag{
+    font-family:'Fraunces',serif;font-style:italic;color:var(--brass);font-size:15px;
+    display:block;margin-bottom:20px;
+  }
+  .gap-col h3{font-size:26px;color:var(--paper);line-height:1.3;margin-bottom:16px;}
+  .gap-col p{color:rgba(243,239,230,0.72);font-size:15.5px;}
+
+  /* ---------- HOW IT WORKS ---------- */
+  .steps{position:relative;max-width:760px;margin:0 auto;}
+  .steps::before{
+    content:"";position:absolute;left:23px;top:10px;bottom:10px;width:1px;
+    background:var(--line);
+  }
+  .step{display:grid;grid-template-columns:48px 1fr;gap:24px;padding-bottom:44px;position:relative;}
+  .step:last-child{padding-bottom:0;}
+  .step-num{
+    width:48px;height:48px;border-radius:50%;
+    background:var(--paper);border:1px solid var(--ink);
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Fraunces',serif;font-weight:600;font-size:17px;
+    z-index:1;
+  }
+  .step-body h3{font-size:19px;margin-bottom:8px;padding-top:10px;}
+  .step-body p{color:var(--slate);font-size:15.5px;max-width:56ch;}
+
+  /* ---------- FEATURES ---------- */
+  .feature-lead{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:1px;
+    background:var(--line);border:1px solid var(--line);margin-bottom:1px;
+  }
+  .feature-lead article{background:var(--paper);padding:36px 32px 40px;}
+  .feature-lead .fi{width:34px;height:34px;color:var(--brick);margin-bottom:22px;}
+  .feature-lead h3{font-size:20px;margin-bottom:12px;}
+  .feature-lead p{color:var(--slate);font-size:15px;}
+
+  .feature-list{border:1px solid var(--line);border-top:none;}
+  .feature-row{
+    display:grid;grid-template-columns:34px 220px 1fr;gap:24px;
+    align-items:center;padding:22px 32px;border-top:1px solid var(--line);
+  }
+  .feature-row .fi{width:22px;height:22px;color:var(--brass-dark);}
+  .feature-row h4{font-family:'IBM Plex Sans',sans-serif;font-weight:600;font-size:15.5px;}
+  .feature-row p{color:var(--slate);font-size:14.5px;}
+
+  /* ---------- WHO IT'S FOR ---------- */
+  .who{background:var(--paper-2);}
+  .badges{display:flex;flex-wrap:wrap;gap:16px;}
+  .badge{
+    flex:1 1 260px;border:1px solid var(--ink);background:var(--paper);
+    padding:26px 24px;
+  }
+  .badge .b-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;}
+  .badge .b-index{font-family:'Fraunces',serif;font-style:italic;color:var(--brick);font-size:14px;}
+  .badge h4{font-family:'Fraunces',serif;font-weight:600;font-size:19px;margin-bottom:8px;}
+  .badge p{color:var(--slate);font-size:14.5px;}
+
+  /* ---------- IMPACT / GOAL ---------- */
+  .impact .wrap{display:grid;grid-template-columns:1.1fr 0.9fr;gap:64px;}
+  blockquote{
+    font-family:'Fraunces',serif;font-weight:500;font-size:30px;line-height:1.4;
+    color:var(--ink);margin:0;
+  }
+  blockquote span{color:var(--brick);}
+  .impact-list{display:flex;flex-direction:column;gap:22px;}
+  .impact-item{display:grid;grid-template-columns:22px 1fr;gap:16px;}
+  .impact-item .dash{
+    width:22px;height:1px;background:var(--brass-dark);margin-top:12px;
+  }
+  .impact-item p{font-size:15.5px;color:var(--ink-2);}
+
+  /* ---------- CTA BAND ---------- */
+  .cta-band{background:var(--ink);color:var(--paper);text-align:center;padding:110px 0;}
+  .cta-band .tagline{
+    font-family:'Fraunces',serif;font-style:italic;font-weight:500;
+    font-size:44px;color:var(--paper);
+  }
+  .cta-band .tagline em{color:var(--brass);font-style:italic;}
+  .cta-band p{margin:20px auto 0;max-width:52ch;color:rgba(243,239,230,0.72);font-size:16px;}
+  .cta-band .actions{display:flex;gap:14px;justify-content:center;margin-top:36px;flex-wrap:wrap;}
+
+  /* ---------- FOOTER ---------- */
+  footer{padding:64px 0 40px;}
+  .foot-grid{
+    display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:32px;
+    padding-bottom:44px;border-bottom:1px solid var(--line);
+  }
+  .foot-brand .logo{margin-bottom:14px;}
+  .foot-brand p{color:var(--slate);font-size:14.5px;max-width:32ch;}
+  .foot-col h5{font-size:13.5px;font-weight:600;color:var(--ink);margin-bottom:16px;}
+  .foot-col ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:11px;}
+  .foot-col a{color:var(--slate);font-size:14.5px;}
+  .foot-col a:hover{color:var(--brick);}
+  .foot-bottom{
+    display:flex;justify-content:space-between;align-items:center;padding-top:24px;
+    color:var(--slate);font-size:13.5px;flex-wrap:wrap;gap:10px;
+  }
+
+  /* ---------- RESPONSIVE ---------- */
+  @media (max-width:940px){
+    .hero .wrap{grid-template-columns:1fr;}
+    .hero-figure{order:-1;}
+    .hero h1{font-size:42px;}
+    .gap .wrap{grid-template-columns:1fr;}
+    .gap-col + .gap-col{border-left:none;border-top:1px solid var(--line-light);}
+    .feature-lead{grid-template-columns:1fr;}
+    .feature-row{grid-template-columns:28px 1fr;grid-template-areas:"icon title" "icon desc";}
+    .feature-row h4{grid-area:title;}
+    .feature-row p{grid-area:desc;}
+    .impact .wrap{grid-template-columns:1fr;gap:40px;}
+    .foot-grid{grid-template-columns:1fr 1fr;}
+  }
+  @media (max-width:720px){
+    .nav-links{display:none;}
+    .nav-cta .btn-ghost{display:none;}
+    .burger{display:block;}
+    .section-pad{padding:72px 0;}
+    .section-head h2{font-size:30px;}
+    .cta-band .tagline{font-size:32px;}
+    .foot-grid{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <nav class="wrap">
+    <a href="#" class="logo"><span class="mark"></span>CivicSolve</a>
+    <div class="nav-links">
+      <a href="#how">How it works</a>
+      <a href="#features">Features</a>
+      <a href="#who">Who it's for</a>
+      <a href="#impact">Impact</a>
+    </div>
+    <div class="nav-cta">
+      <a href="#" class="btn btn-ghost">Post a problem</a>
+      <a href="#" class="btn btn-solid">Partner with us</a>
+      <button class="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+    </div>
+  </nav>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <span class="kicker">A civic problem-solving network</span>
+      <h1>From problems<br>to progress.</h1>
+      <p class="lede">CivicSolve gives real societal problems a place to be posted, matched with the people equipped to work on them, and carried through to a working pilot — instead of stopping at a report nobody follows up on.</p>
+      <div class="actions">
+        <a href="#" class="btn btn-solid">Post a problem</a>
+        <a href="#" class="btn btn-ghost">Bring your team</a>
+      </div>
+    </div>
+    <div class="hero-figure" aria-hidden="true">
+      <svg viewBox="0 0 480 420" fill="none">
+        <circle cx="240" cy="210" r="46" fill="#F3EFE6" stroke="#14213D" stroke-width="1.5"/>
+        <text x="240" y="205" text-anchor="middle" font-family="IBM Plex Sans" font-size="11" font-weight="600" fill="#14213D">Shared</text>
+        <text x="240" y="220" text-anchor="middle" font-family="IBM Plex Sans" font-size="11" font-weight="600" fill="#14213D">workspace</text>
+
+        <circle cx="90" cy="80" r="6" fill="#A24632"/>
+        <circle cx="80" cy="330" r="6" fill="#B4863B"/>
+        <circle cx="400" cy="70" r="6" fill="#5C6B7A"/>
+
+        <path class="line-draw d1" d="M90 80 C 150 110, 180 150, 202 182" stroke="#14213D" stroke-width="1.3"/>
+        <path class="line-draw d2" d="M80 330 C 140 300, 175 260, 205 232" stroke="#14213D" stroke-width="1.3"/>
+        <path class="line-draw d3" d="M400 70 C 340 110, 300 150, 274 182" stroke="#14213D" stroke-width="1.3"/>
+        <path class="line-draw d4" d="M240 256 C 240 300, 240 340, 240 372" stroke="#A24632" stroke-width="1.5"/>
+        <path class="line-draw d4" d="M232 364 L240 380 L248 364" stroke="#A24632" stroke-width="1.5" fill="none"/>
+
+        <text x="60" y="65" font-family="Fraunces" font-style="italic" font-size="13" fill="#14213D">Citizens &amp; government</text>
+        <text x="30" y="352" font-family="Fraunces" font-style="italic" font-size="13" fill="#14213D">Universities &amp; researchers</text>
+        <text x="290" y="55" font-family="Fraunces" font-style="italic" font-size="13" fill="#14213D">Industry &amp; startups</text>
+        <text x="204" y="404" font-family="Fraunces" font-style="italic" font-size="13" fill="#A24632">Pilot &amp; impact</text>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- THE GAP -->
+<section class="gap">
+  <div class="wrap">
+    <div class="gap-col">
+      <span class="tag">Right now</span>
+      <h3>The problem gets reported. The report gets filed.</h3>
+      <p>A pothole, a polluted stretch of river, a gap in disaster response — someone notices, someone files a complaint or writes a case study, and it mostly ends there. Meanwhile a university lab three kilometres away has the exact skills to help, and never hears about it.</p>
+    </div>
+    <div class="gap-col">
+      <span class="tag">On CivicSolve</span>
+      <h3>The problem gets posted, matched, and worked.</h3>
+      <p>The same problem goes up as a listing with a location, a domain, and a severity. Students, researchers, and industry teams who fit it are surfaced automatically, form a team in a shared workspace, and the sponsoring organisation can pilot what they build.</p>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how" class="section-pad">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>How it works</h2>
+      <p>Eight steps carry a problem from a first report to a measured outcome.</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <h3>A problem gets posted</h3>
+          <p>Citizens, government bodies, or NGOs describe a real, local, or sector-wide problem worth solving.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <h3>It's sorted by domain, place, and stakes</h3>
+          <p>Every listing is categorised by domain, location, severity, and expected impact so it can be found and prioritised.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <h3>Smart matching finds who should see it</h3>
+          <p>An AI-based matching layer surfaces the universities, students, researchers, and industry partners best placed to work on it.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <h3>Interested teams form and collaborate</h3>
+          <p>Matched contributors opt in and coordinate through a shared workspace built for the project.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">5</div>
+        <div class="step-body">
+          <h3>Industry backs the strongest teams</h3>
+          <p>Companies contribute funding, mentorship, datasets, or API access to the projects they believe in.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">6</div>
+        <div class="step-body">
+          <h3>Teams build a solution</h3>
+          <p>With support in place, the team develops and submits a working solution to the original problem.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">7</div>
+        <div class="step-body">
+          <h3>A pilot gets run</h3>
+          <p>Government bodies or the relevant organisation test promising solutions through a real pilot project.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">8</div>
+        <div class="step-body">
+          <h3>Progress and impact are tracked</h3>
+          <p>The platform follows each project from first post to pilot, recording outcomes and who benefited.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features" class="section-pad" style="background:var(--paper-2);">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>What's on the platform</h2>
+      <p>Three core systems carry every project. Five more make the work fair, funded, and visible.</p>
+    </div>
+
+    <div class="feature-lead">
+      <article>
+        <svg class="fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="3.5" width="16" height="4.5" rx="0.5"/><rect x="4" y="9.75" width="16" height="4.5" rx="0.5"/><rect x="4" y="16" width="16" height="4.5" rx="0.5"/></svg>
+        <h3>Problem repository</h3>
+        <p>One place to post and browse societal challenges, searchable by domain, location, and how urgent they are.</p>
+      </article>
+      <article>
+        <svg class="fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="6" cy="6" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="12" cy="18" r="2.5"/><path d="M8 7.5L11 16M16 7.5L13 16M8.5 6H15.5"/></svg>
+        <h3>AI smart matching</h3>
+        <p>Matches each problem with the students, researchers, universities, and industry partners best suited to it.</p>
+      </article>
+      <article>
+        <svg class="fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3.5" y="4" width="17" height="16" rx="0.5"/><path d="M3.5 9h17M8 4v5"/></svg>
+        <h3>Collaboration workspace</h3>
+        <p>A shared space for matched teams to manage tasks, share documents, and communicate as they build.</p>
+      </article>
+    </div>
+
+    <div class="feature-list">
+      <div class="feature-row">
+        <svg class="fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 20l4-4M4 20V4h16v9.5"/><path d="M13 21l7-7-3.5-3.5L13 17v4z"/></svg>
+        <h4>Industry sponsorship</h4>
+        <p>Companies fund and mentor the projects they want to see succeed.</p>
+      </div>
+      <div class="feature-row">
+        <svg class="fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3l2.4 5.1 5.6.7-4.1 3.9 1 5.6-4.9-2.7-4.9 2.7 1-5.6-4.1-3.9 5.6-.7z"/></svg>
+        <h4>Gamification</h4>
+        <p>Points, badges, and recognition for contributors as projects progress.</p>
+      </div>
+      <div class="feature-row">
+        <svg class="fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 20V10M11 20V4M18 20v-7"/></svg>
+        <h4>Impact tracker</h4>
+        <p>Follows a project from first report to pilot, and measures who it reached.</p>
+      </div>
+      <div class="feature-row">
+        <svg class="fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21s7-6.1 7-11.5A7 7 0 105 9.5C5 14.9 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.2"/></svg>
+        <h4>Geo-tagging</h4>
+        <p>Problems carry a location, so local challenges reach local solvers.</p>
+      </div>
+      <div class="feature-row">
+        <svg class="fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 12l2 2 4-4"/><rect x="3.5" y="4" width="17" height="16" rx="1"/></svg>
+        <h4>Transparent contribution tracking</h4>
+        <p>Records who contributed what, so credit and IP attribution stay clear.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHO IT'S FOR -->
+<section id="who" class="who section-pad">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Who it's for</h2>
+      <p>Six kinds of participants, each entering the same problem from a different side.</p>
+    </div>
+    <div class="badges">
+      <div class="badge">
+        <div class="b-top"><h4>Government departments</h4><span class="b-index">01</span></div>
+        <p>Post civic problems and commission pilots for the solutions that hold up.</p>
+      </div>
+      <div class="badge">
+        <div class="b-top"><h4>Universities &amp; colleges</h4><span class="b-index">02</span></div>
+        <p>Give coursework and research a real problem and a real outcome to aim at.</p>
+      </div>
+      <div class="badge">
+        <div class="b-top"><h4>Students &amp; researchers</h4><span class="b-index">03</span></div>
+        <p>Work on challenges that exist outside the classroom, with credit attached.</p>
+      </div>
+      <div class="badge">
+        <div class="b-top"><h4>Companies &amp; startups</h4><span class="b-index">04</span></div>
+        <p>Fund, mentor, and get early sight of solutions worth building further.</p>
+      </div>
+      <div class="badge">
+        <div class="b-top"><h4>NGOs</h4><span class="b-index">05</span></div>
+        <p>Bring frontline problems to people with the time and skills to work on them.</p>
+      </div>
+      <div class="badge">
+        <div class="b-top"><h4>Citizens</h4><span class="b-index">06</span></div>
+        <p>Report the problem in front of you and follow what happens to it.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- IMPACT / GOAL -->
+<section id="impact" class="impact section-pad">
+  <div class="wrap">
+    <blockquote>The gap CivicSolve closes isn't a lack of ideas — it's the distance between a <span>classroom</span> and a <span>city council</span>.</blockquote>
+    <div class="impact-list">
+      <div class="impact-item"><div class="dash"></div><p>Faster development of solutions for societal problems.</p></div>
+      <div class="impact-item"><div class="dash"></div><p>Closer working relationships between academia, government, and industry.</p></div>
+      <div class="impact-item"><div class="dash"></div><p>Real, practical project experience for students and researchers.</p></div>
+      <div class="impact-item"><div class="dash"></div><p>More paths from a good idea to a startup.</p></div>
+      <div class="impact-item"><div class="dash"></div><p>A visible, traceable record of a project's real-world impact.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BAND -->
+<section class="cta-band">
+  <div class="wrap">
+    <p class="tagline">From problems <em>to progress.</em></p>
+    <p>Post the problem you're stuck on, or bring your university, lab, or company to the ones already waiting for a team.</p>
+    <div class="actions">
+      <a href="#" class="btn btn-solid-brass">Post a problem</a>
+      <a href="#" class="btn btn-on-dark">Partner with us</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <a href="#" class="logo"><span class="mark"></span>CivicSolve</a>
+        <p>A digital platform connecting citizens, government, academia, and industry around societal problems worth solving together.</p>
+      </div>
+      <div class="foot-col">
+        <h5>Platform</h5>
+        <ul>
+          <li><a href="#how">How it works</a></li>
+          <li><a href="#features">Features</a></li>
+          <li><a href="#impact">Impact</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h5>Partners</h5>
+        <ul>
+          <li><a href="#who">For universities</a></li>
+          <li><a href="#who">For industry</a></li>
+          <li><a href="#who">For government</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h5>Get involved</h5>
+        <ul>
+          <li><a href="#">Post a problem</a></li>
+          <li><a href="#">Join as a contributor</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 CivicSolve</span>
+      <span>From problems to progress.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const burger = document.querySelector('.burger');
+  const navLinks = document.querySelector('.nav-links');
+  burger.addEventListener('click', () => {
+    const open = navLinks.style.display === 'flex';
+    navLinks.style.display = open ? 'none' : 'flex';
+    navLinks.style.cssText += open ? '' : 'position:absolute;top:74px;left:0;right:0;background:#F3EFE6;flex-direction:column;padding:24px 32px;border-bottom:1px solid rgba(20,33,61,0.14);';
+  });
+</script>
+
+</body>
+</html>
